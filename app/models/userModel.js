@@ -18,7 +18,7 @@ function userModel (state, bus) {
     nickname: localStorage.getItem('livelab-nickname') || '',
     statusMessage: '',
     multiPeer: null,
-    muted: false,
+    muted: true,
     isOnline: true
   }, state.user)
 
