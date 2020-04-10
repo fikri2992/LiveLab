@@ -69,12 +69,16 @@ function uiModel (state, bus) {
   bus.on('ui:addAudio', function(opts) {
     if(opts.peerId == state.user.uuid) {
       console.log('adding user audio',state.ui.communication[opts.peerId], opts.peerId)
+      state.ui.communication[opts.peerId] = {
+        volume: 0.0
+      }
     }  else {
         console.log('adding peer audio',state.ui.communication[opts.peerId], opts.peerId)
+        state.ui.communication[opts.peerId] = {
+          volume: 1.0
+        }
     }
-    state.ui.communication[opts.peerId] = {
-      volume: 1.0
-    }
+
     var audioEl = Audio.addTrack(opts.track, state.ui.communication[opts.peerId].volume)
     state.ui.communication[opts.peerId].audioEl = audioEl
   })
