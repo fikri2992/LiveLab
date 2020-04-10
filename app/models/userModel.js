@@ -13,7 +13,7 @@ function userModel (state, bus) {
     uuid: shortid.generate(), // for dev purposes, always regenerate id
     room: state.query.room || localStorage.getItem('livelab-room') || 'zebra',
     server: 'https://livelab.app:6643',
-    version: '1.2.1',
+    version: '1.2.1x',
     loggedIn: false,
     nickname: localStorage.getItem('livelab-nickname') || '',
     statusMessage: '',
@@ -55,17 +55,12 @@ function userModel (state, bus) {
 
   // @ to do: dont update state within function, move to ui model
   bus.on('user:toggleMute', function() {
-    var defaultStreamId = state.peers.byId[state.user.uuid].defaultStream
-    var defaultStream = state.media.byId[defaultStreamId].stream
-    var audioTracks = defaultStream.getAudioTracks()
     if(state.user.muted===true) {
-      audioTracks.forEach((track) => track.enabled = true)
       state.user.muted = false
     } else {
-    //  track.enabled = false
-      audioTracks.forEach((track) => track.enabled = false)
       state.user.muted = true
     }
+    updateMute()
     bus.emit('render')
   })
 
@@ -78,9 +73,23 @@ function userModel (state, bus) {
   //  bus.emit('render')
   })
 
+  function updateMute() {
+    var defaultStreamId = state.peers.byId[state.user.uuid].defaultStream
+    var defaultStream = state.media.byId[defaultStreamId].stream
+    var audioTracks = defaultStream.getAudioTracks()
+    audioTracks.forEach((track) => {
+      track.enabled = !state.user.muted
+    })
+  }
+
 
   // Initiate connection with signalling server
   bus.on('user:join', function (opts) {
+    // var defaultStreamId = state.peers.byId[state.user.uuid].defaultStream
+    // var defaultStream = state.media.byId[defaultStreamId].stream
+    // var audioTracks = defaultStream.getAudioTracks()
+    // console.log('audio tracks', audioTracks)
+    updateMute()
   //  localStorage.setItem('uuid', state.user.uuid)
     localStorage.setItem('livelab-nickname', state.user.nickname)
     localStorage.setItem('livelab-room', state.user.room)
