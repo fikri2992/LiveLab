@@ -133,7 +133,9 @@ function devicesModel (state, bus) {
   }
 
   bus.on('devices:startCall', function (opts)  {
-    var stream = getStreamFromPreviewTracks()
+  //  console.log(ops)
+  //  var stream = getStreamFromPreviewTracks()
+    var stream = opts.stream
     bus.emit('media:addStream', {
       //    track: track,
       stream: stream,

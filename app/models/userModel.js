@@ -90,6 +90,26 @@ function userModel (state, bus) {
     // var audioTracks = defaultStream.getAudioTracks()
     // console.log('audio tracks', audioTracks)
     updateMute()
+  //  emit('user:join',  {room: this.room, server: this.server, stream: new MediaStream(Object.values(this.tracks)), nickname: this.nickname, requestMedia: true})
+
+    state.user.nickname = opts.nickname
+    state.user.room = opts.room
+    state.user.server = opts.server
+    // state.devices.default: {
+    //   name: 'default',
+    //   inputDevices: {
+    //     audio: null,
+    //     video: null
+    //   },
+    //   previewTracks: {
+    //     audio: null,
+    //     video: null
+    //   },
+    //   trackInfo: {
+    //     audio: {},
+    //     video: {}
+    //   },
+
   //  localStorage.setItem('uuid', state.user.uuid)
     localStorage.setItem('livelab-nickname', state.user.nickname)
     localStorage.setItem('livelab-room', state.user.room)

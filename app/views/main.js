@@ -1,7 +1,7 @@
 'use strict'
 
 const html = require('choo/html')
-const login = require('./login.js')
+const Login = require('./login.js')
 const workspace = require('./workspace.js')
 
 module.exports = mainView
@@ -9,7 +9,7 @@ function mainView (state, emit) {
   if (!state.user.loggedIn) {
     return html`
     <div>
-      ${login(state, emit)}
+      ${state.cache(Login, 'login').render(state, emit)}
     </div>
     `
   } else {
@@ -20,7 +20,7 @@ function mainView (state, emit) {
     `
   }
 }
-// 
+//
 // ${state.user.isOnline === false ?
 //     html`
 //       <div class='absolute bg-red w-100 pa3 tc'>
