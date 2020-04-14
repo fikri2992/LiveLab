@@ -136,6 +136,7 @@ function devicesModel (state, bus) {
   //  console.log(ops)
   //  var stream = getStreamFromPreviewTracks()
     var stream = opts.stream
+    state.devices.default.previewTracks = { audio: null, video: null}
     bus.emit('media:addStream', {
       //    track: track,
       stream: stream,
@@ -150,7 +151,8 @@ function devicesModel (state, bus) {
   })
 
   bus.on('devices:addNewMediaToBroadcast', function ({isDefault = false} = {}) {
-    var stream = getStreamFromPreviewTracks()
+     var stream = getStreamFromPreviewTracks()
+  //  var stream = new MediaStream()
     bus.emit('media:addStream', {
       stream: stream,
       streamId: stream.id,
