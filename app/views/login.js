@@ -14,7 +14,7 @@ const videoDropdown = Dropdown()
 module.exports = class Login extends Component {
   constructor (id, state, emit) {
     super(id)
-    console.log('loading login', state, emit)
+  //  console.log('loading login', state, emit)
     this.previewVideo = null
     this.nickname = state.user.nickname
     this.room = state.user.room
@@ -106,7 +106,7 @@ module.exports = class Login extends Component {
   createElement (state, emit) {
     //  this.local.center = center
   //  this.dropDownEl =
-    console.log('creating element', this)
+  //  console.log('creating element', this)
     this.audioDropdown = audioDropdown.render({
       value: 'Audio:  ' + (this.selectedDevices.audio === null ? '' : this.devices.audio[this.selectedDevices.audio].label),
       options: this.devices.audio.map((device, index) => (  { value: index,  label: device.label })),

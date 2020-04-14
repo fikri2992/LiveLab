@@ -49,7 +49,7 @@ module.exports = class MediaSettings extends Component {
         this.selectedDevices.video = 0
         this.updateVideo()
       }
-      this.createElement(this.isOpen)
+  //    this.createElement(this.isOpen)
     //  console.log(this, this.devices.audio)
   }).catch((err) =>this.log('error', err))
   }
@@ -63,9 +63,11 @@ module.exports = class MediaSettings extends Component {
 
   }
 
-  update (state) {
+  update (isOpen) {
     // @ to do: test whether media settings is open has changed
-    return true
+  //  return true
+   if(isOpen !== this.isOpen) return true
+   return false
   }
 
   updateAudio() {
@@ -78,7 +80,7 @@ module.exports = class MediaSettings extends Component {
       }).catch((err) => {
         this.emit('log:error', err)
       })
-    this.createElement(this.isOpen)
+  //  this.createElement(this.isOpen)
   }
 
   updateVideo() {
@@ -88,13 +90,25 @@ module.exports = class MediaSettings extends Component {
         // console.log('stream is', stream)
          this.tracks.video = stream.getVideoTracks()[0]
          this.trackInfo.video = this.tracks.video.getSettings()
+        // console.log('settings', this.trackInfo.video)
+         this.trackInfoEl.innerHTML = `Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps`
+        // console.log(this.trackInfoEl)
+
       //   console.log('settings', this.trackInfo.video)
-         this.createElement(this.isOpen)
+      //   this.createElement(this.isOpen)
+        this.previewVideo = Video({
+          htmlProps: { class: 'w-100 h-100', style: 'object-fit:contain;'},
+          index: "login-settings-video",
+          track: this.tracks.video,
+          id: this.tracks.video === null ? null : this.tracks.video.id
+        })
       }).catch((err) => {
         this.emit('log:error', err)
       })
-    this.createElement(this.isOpen)
+//    this.createElement(this.isOpen)
   }
+
+  //setVideo()
 
   createElement (isOpen) {
     this.isOpen = isOpen
@@ -120,7 +134,7 @@ module.exports = class MediaSettings extends Component {
         }
       })
 
-    var previewVideo = Video({
+    this.previewVideo = Video({
       htmlProps: { class: 'w-100 h-100', style: 'object-fit:contain;'},
       index: "login-settings-video",
       track: this.tracks.video,
@@ -128,7 +142,7 @@ module.exports = class MediaSettings extends Component {
     })
 
     var audioSettings = Object.keys(this.constraints.audio).map((constraint) =>
-      html`<div class="pv1">
+      html`<div class="pv1 dib mr3">
       <input type="checkbox" id=${constraint} name=${constraint} checked=${this.constraints.audio[constraint]}
         onchange=${(e) => {
           this.constraints.audio[constraint] = e.target.checked
@@ -137,18 +151,21 @@ module.exports = class MediaSettings extends Component {
       <span class="pl1">${constraint}</span></div>`
     )
 
-    var videoSettings = Object.keys(this.constraints.video).map((constraint) => input(constraint, "",
+    var videoSettings = Object.keys(this.constraints.video).map((constraint) => html`
+        <div class="dib w4 pr3">
+        ${input(constraint, "",
           {
             value: this.constraints.video[constraint],
             onkeyup: (e) => {
               this.constraints.video[constraint] = parseInt(e.srcElement.value)
               this.updateVideo()
             }
-          })
+          })}
+        </div>`
      )
 
-    var trackInfo =  html` <div class="mt2 mb4 i">Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps</div>`
-  //  console.log('rendering',trackInfo)
+    this.trackInfoEl =  html` <div class="mt2 mb4 i">Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps</div>`
+  //  console.log('rendering',this.trackInfoEl)
 
     var popup = html`${Modal({
       show: isOpen,
@@ -157,21 +174,21 @@ module.exports = class MediaSettings extends Component {
             ${this.audioDropdown}
             ${this.videoDropdown}
             <div class="w-100 db flex mt4">
-              <div class="w-60 h5 dib fl">
-              ${previewVideo}
+              <div class="w-40 h5 dib fl">
+              ${this.previewVideo}
               </div>
-              <div class="w-30 dib fl pa4">
+              <div class="w-60 dib fl pa3 pl4">
                 <h3>Media Settings</h3>
                  <h4> Audio </h4>
                   ${audioSettings}
-                 <h4> Video </h4>
+                 <h4 class="mt4 mb0"> Video </h4>
                   ${videoSettings}
               </div>
             </div>
-              ${trackInfo}
+              ${this.trackInfoEl}
               <!--buttons go here-->
-              <div class="f6 link dim ph3 pv2 mb2 dib white bg-gray pointer" onclick=${this.onClose}>Cancel</div>
-              <div class="f6 link dim ph3 pv2 mb2 dib white bg-dark-pink pointer" onclick=${this.onSave}>Save</div>
+              <div class="f6 link dim ph3 pv2 mb2 dib white bg-dark-pink pointer fr mb4 mr6" onclick=${this.onSave}>Save</div>
+              <div class="f6 link dim ph3 pv2 mb2 dib white bg-gray pointer fr mb4 mr4" onclick=${this.onClose}>Cancel</div>
         </div>`,
         close: this.onClose
     })}
