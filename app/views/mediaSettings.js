@@ -76,6 +76,7 @@ module.exports = class MediaSettings extends Component {
       .then((stream) => {
          //console.log('stream is', stream)
          this.tracks.audio = stream.getAudioTracks()[0]
+         this.tracks.audio.applyConstraints(constraints) // apply constraints again because seems to not always work on initial getUserMedia
          this.trackInfo.audio = this.tracks.audio.getSettings()
       }).catch((err) => {
         this.emit('log:error', err)
@@ -84,18 +85,17 @@ module.exports = class MediaSettings extends Component {
   }
 
   updateVideo() {
+
     var constraints = Object.assign({},  this.constraints.video, { deviceId: this.devices.video[this.selectedDevices.video].deviceId })
+    console.log('applying constraints', constraints)
     navigator.mediaDevices.getUserMedia({ audio: false, video: constraints })
       .then((stream) => {
-        // console.log('stream is', stream)
          this.tracks.video = stream.getVideoTracks()[0]
+         this.tracks.video.applyConstraints(constraints) // apply constraints again because seems to not always work on initial getUserMedia
          this.trackInfo.video = this.tracks.video.getSettings()
         // console.log('settings', this.trackInfo.video)
          this.trackInfoEl.innerHTML = `Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps`
-        // console.log(this.trackInfoEl)
 
-      //   console.log('settings', this.trackInfo.video)
-      //   this.createElement(this.isOpen)
         this.previewVideo = Video({
           htmlProps: { class: 'w-100 h-100', style: 'object-fit:contain;'},
           index: "login-settings-video",

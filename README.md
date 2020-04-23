@@ -48,6 +48,9 @@ npm run watch
 ```
 
 # Changelog
+## [1.2.1b] - 2020-04-23
+ - Call 'apply constraints' twice in order to insure resolution.
+ 
 ## [1.2.1] - 2020-03-27
 ### Added
  - room and nickname info saved to local storage
