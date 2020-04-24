@@ -22,7 +22,7 @@ module.exports = class Login extends Component {
     this.state = state
     this.emit = emit
     this.devices = { audio: [], video: [] }
-    this.selectedDevices = { audio: null, video: null }
+    this.selectedDevices = { audio: {label: 'initial', deviceId: ''}, video:  {label: 'initial', deviceId: ''} }
     this.tracks = { audio: null, video: null }
     this.trackInfo = { audio: {}, video: {} }
 
@@ -39,8 +39,10 @@ module.exports = class Login extends Component {
     enumerateDevices().then((devices) => {
       this.devices.audio = devices.filter((elem) => elem.kind == 'audioinput')
       this.devices.video = devices.filter((elem) => elem.kind == 'videoinput')
-      if(this.devices.audio.length > 0) this.setAudio(0)
-      if(this.devices.video.length > 0) this.setVideo(0)
+      this.devices.audio.push({label: 'no audio', deviceId: false})
+      this.devices.video.push({label: 'no video', deviceId: false})
+      if(this.devices.audio.length > 0) this.getMedia('audio', 0)
+      if(this.devices.video.length > 0) this.getMedia('video', 0)
       this.createElement(state, emit)
     //  console.log(this, this.devices.audio)
     }).catch((err) => emit('log:error', err))
@@ -76,47 +78,77 @@ module.exports = class Login extends Component {
     return true
   }
 
-  setAudio(value) {
-    this.selectedDevices.audio = value
-    navigator.mediaDevices.getUserMedia({ audio: { deviceId: this.devices.audio[value].deviceId }, video: false })
-      .then((stream) => {
-      //   console.log('stream is', stream)
-         this.tracks.audio = stream.getAudioTracks()[0]
-         this.trackInfo.audio = this.tracks.audio.getSettings()
-      }).catch((err) => {
-        this.emit('log:error', err)
-      })
-    this.createElement(this.state, this.emit)
+  log ( type, message) {
+    console[type](message)
   }
 
-  setVideo(value) {
-    this.selectedDevices.video = value
-    navigator.mediaDevices.getUserMedia({ audio: false, video: { deviceId: this.devices.video[value].deviceId } })
-      .then((stream) => {
-      //   console.log('stream is', stream)
-         this.tracks.video = stream.getVideoTracks()[0]
-         this.trackInfo.video = this.tracks.video.getSettings()
-         this.createElement(this.state, this.emit)
-      }).catch((err) => {
-        this.emit('log:error', err)
-      })
-    this.createElement(this.state, this.emit)
+
+  getMedia(kind, value) {
+    this.selectedDevices[kind] = this.devices[kind][value]
+    console.log('getting', this.selectedDevices[kind])
+    const initialConstraints = { audio: false, video: false}
+    if(this.selectedDevices[kind].deviceId !== false) {
+     initialConstraints[kind] =  { deviceId: this.selectedDevices[kind].deviceId }
+     console.log(initialConstraints)
+     navigator.mediaDevices.getUserMedia(initialConstraints)
+     .then((stream) => {
+       console.log(`%c got user media (${kind})`, 'background: #0044ff; color: #fff', stream.getTracks())
+       this.tracks[kind] = stream.getTracks().filter((track) => track.kind == kind)[0]
+       this.trackInfo[kind] = this.tracks[kind].getSettings()
+       this.rerender()
+     }).catch((err) => {
+       //this.emit('log:error', err)
+       this.log('error', err)
+     })
+   } else {
+     this.tracks[kind] = null
+     this.rerender()
+   }
   }
+
+  // setAudio(value) {
+  //   this.selectedDevices.audio = this.devices.audio[value]
+  //   navigator.mediaDevices.getUserMedia({ audio: { deviceId: this.selectedDevices.video.deviceId }, video: false })
+  //     .then((stream) => {
+  //     //   console.log('stream is', stream)
+  //        this.tracks.audio = stream.getAudioTracks()[0]
+  //        this.trackInfo.audio = this.tracks.audio.getSettings()
+  //     }).catch((err) => {
+  //       this.emit('log:error', err)
+  //     })
+  //   this.createElement(this.state, this.emit)
+  // }
+  //
+  // setVideo(value) {
+  //   this.selectedDevices.video = this.devices.video[value]
+  // //  console.log('getting media', { audio: false, video: { deviceId: this.devices.video[value].deviceId } })
+  //   navigator.mediaDevices.getUserMedia({ audio: false, video: { deviceId: this.selectedDevices.audio.deviceId } })
+  //     .then((stream) => {
+  //     //   console.log('stream is', stream)
+  //        this.tracks.video = stream.getVideoTracks()[0]
+  //        this.trackInfo.video = this.tracks.video.getSettings()
+  //        this.createElement(this.state, this.emit)
+  //     }).catch((err) => {
+  //       this.emit('log:error', err)
+  //     })
+  //   this.createElement(this.state, this.emit)
+  // }
 
   createElement (state, emit) {
     //  this.local.center = center
   //  this.dropDownEl =
   //  console.log('creating element', this)
     this.audioDropdown = audioDropdown.render({
-      value: 'Audio:  ' + (this.selectedDevices.audio === null ? '' : this.devices.audio[this.selectedDevices.audio].label),
+      value: 'Audio:  ' + (this.selectedDevices.audio === null ? '' : this.selectedDevices.audio.label),
       options: this.devices.audio.map((device, index) => (  { value: index,  label: device.label })),
-      onchange:   this.setAudio.bind(this)
+      // onchange:   this.setAudio.bind(this)
+      onchange: (value) => this.getMedia('audio', value)
     })
 
     this.videoDropdown = videoDropdown.render({
-        value: 'Video:  ' + (this.selectedDevices.video === null ? '' : this.devices.video[this.selectedDevices.video].label),
+        value: 'Video:  ' + (this.selectedDevices.video === null ? '' : this.selectedDevices.video.label),
         options: this.devices.video.map((device, index) => (  { value: index, label: device.label})),
-        onchange: this.setVideo.bind(this)
+        onchange: (value) => this.getMedia('video', value)
       })
 
     return html`
@@ -146,16 +178,18 @@ module.exports = class Login extends Component {
           ${this.audioDropdown}
           ${this.videoDropdown}
         <div class="f6 link dim ph3 pv2 mb2 dib white bg-dark-pink pointer" onclick=${() => {
-
-          emit('devices:startCall',  {room: this.room, server: this.server, stream: new MediaStream(Object.values(this.tracks)), nickname: this.nickname, requestMedia: true})
+          var tracks = Object.values(this.tracks).filter((track) => track !== null)
+          emit('devices:startCall',  {room: this.room, server: this.server, stream: new MediaStream(tracks), nickname: this.nickname, requestMedia: true})
         }}>Join</div>
         <div> ${state.user.statusMessage} </div>
-
 
         </div>
         </div>
       </div>
-      ${this.mediaSettings.render(this.settingsIsOpen)}
+      ${this.mediaSettings.render(this.settingsIsOpen, {
+        selectedDevices: this.selectedDevices,
+        tracks: this.tracks
+      })}
     </div>
     `
   }
