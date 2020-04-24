@@ -78,7 +78,8 @@ module.exports = class MediaSettings extends Component {
 
   applyAudioConstraints() {
     console.log('%c applying audio constraints ', 'background: #ff9900; color: #fff', this.constraints.audio)
-    this.tracks.video.applyConstraints(this.constraints.audio)
+    this.tracks.audio.applyConstraints(this.constraints.audio)
+    this.trackInfo.audio = this.tracks.audio.getSettings()
   }
 
   updateAudio() {
@@ -100,6 +101,9 @@ module.exports = class MediaSettings extends Component {
   applyVideoConstraints() {
     console.log('%c applying video constraints ', 'background: #ff9900; color: #fff', this.constraints.video)
     this.tracks.video.applyConstraints(this.constraints.video)
+    this.trackInfo.video = this.tracks.video.getSettings()
+    this.trackInfoEl.innerHTML = `Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps`
+
   }
 
   updateVideo() {
