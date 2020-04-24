@@ -25,12 +25,6 @@ module.exports = class Login extends Component {
     this.selectedDevices = { audio: {label: 'initial', deviceId: ''}, video:  {label: 'initial', deviceId: ''} }
     this.tracks = { audio: null, video: null }
     this.trackInfo = { audio: {}, video: {} }
-
-//    this.devices.audio = []
-  //  this.devices.video = []
-    // this.selectedDevices.audio = null
-    // this.selectedDevices.video = null
-  //  this.tracks.video = null
     this.settingsIsOpen = false
     this.mediaSettings = new MediaSettings({
       onSave: this.updateMedia.bind(this),
@@ -60,17 +54,17 @@ module.exports = class Login extends Component {
     this.selectedDevices = Object.assign({}, this.mediaSettings.selectedDevices)
     this.devices =  Object.assign({}, this.mediaSettings.devices)
     this.settingsIsOpen = false
-    this.createElement(this.state, this.emit)
+    this.rerender()
   }
 
   closeSettings() {
     this.settingsIsOpen = false
-    this.createElement(this.state, this.emit)
+    this.rerender()
   }
 
   openSettings() {
     this.settingsIsOpen = true
-    this.createElement(this.state, this.emit)
+    this.rerender()
   }
 
   update (center) {
@@ -106,33 +100,6 @@ module.exports = class Login extends Component {
    }
   }
 
-  // setAudio(value) {
-  //   this.selectedDevices.audio = this.devices.audio[value]
-  //   navigator.mediaDevices.getUserMedia({ audio: { deviceId: this.selectedDevices.video.deviceId }, video: false })
-  //     .then((stream) => {
-  //     //   console.log('stream is', stream)
-  //        this.tracks.audio = stream.getAudioTracks()[0]
-  //        this.trackInfo.audio = this.tracks.audio.getSettings()
-  //     }).catch((err) => {
-  //       this.emit('log:error', err)
-  //     })
-  //   this.createElement(this.state, this.emit)
-  // }
-  //
-  // setVideo(value) {
-  //   this.selectedDevices.video = this.devices.video[value]
-  // //  console.log('getting media', { audio: false, video: { deviceId: this.devices.video[value].deviceId } })
-  //   navigator.mediaDevices.getUserMedia({ audio: false, video: { deviceId: this.selectedDevices.audio.deviceId } })
-  //     .then((stream) => {
-  //     //   console.log('stream is', stream)
-  //        this.tracks.video = stream.getVideoTracks()[0]
-  //        this.trackInfo.video = this.tracks.video.getSettings()
-  //        this.createElement(this.state, this.emit)
-  //     }).catch((err) => {
-  //       this.emit('log:error', err)
-  //     })
-  //   this.createElement(this.state, this.emit)
-  // }
 
   createElement (state, emit) {
     //  this.local.center = center
