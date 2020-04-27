@@ -157,9 +157,13 @@ module.exports = class MediaSettings extends Component {
   var videoSettings = Object.keys(this.constraints.video).map((constraint) => html`
   <div class="dib w4 pr3">
   ${input(constraint, "", {
-      value: this.constraints.video[constraint],
-      onkeyup: (e) => this.applyConstraints('video', { [constraint]: parseInt(e.srcElement.value) })
-    })}
+  value: this.constraints.video[constraint],
+  onkeyup: (e) => {
+    if(parseInt(e.srcElement.value)) {
+      this.applyConstraints('video', { [constraint]: parseInt(e.srcElement.value) })
+    }
+  }
+})}
   </div>`
 )
 console.log('audio INFO', this.trackInfo.audio)
