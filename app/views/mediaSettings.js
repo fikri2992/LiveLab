@@ -76,20 +76,28 @@ module.exports = class MediaSettings extends Component {
     console.log(`%c applying ${kind} constraints `, 'background: #ff9900; color: #fff', this.constraints[kind])
     this.tracks[kind].applyConstraints(this.constraints[kind])
     this.trackInfo[kind] = this.tracks[kind].getSettings()
+    console.log('settings', this.tracks[kind].getSettings())
+    console.log('constraints', this.tracks[kind].getConstraints()) // not always consistent with settings
+    window.track = this.tracks[kind]
     // this.trackInfoEl.innerHTML = `Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps`
     this.rerender()
   }
 
-  getMedia(kind) {
+  getMedia(kind, applyConstraintsOnInit) {
     const initialConstraints = { audio: false, video: false}
     if(this.selectedDevices[kind].deviceId !== false) {
      initialConstraints[kind] =  { deviceId: this.selectedDevices[kind].deviceId }
+     if(applyConstraintsOnInit) {
+       initialConstraints[kind] = Object.assign({}, initialConstraints[kind], this.constraints[kind])
+     }
      console.log(initialConstraints)
      navigator.mediaDevices.getUserMedia(initialConstraints)
      .then((stream) => {
        console.log(`%c got user media (${kind})`, 'background: #0044ff; color: #fff', stream.getTracks())
        this.tracks[kind] = stream.getTracks().filter((track) => track.kind == kind)[0]
        this.applyConstraints(kind)
+      // console.log('settings', this.tracks[kind].getSettings())
+      // console.log('constraints', this.tracks[kind].getConstraints())
      }).catch((err) => {
        //this.emit('log:error', err)
        this.log('error', err)
@@ -112,7 +120,7 @@ module.exports = class MediaSettings extends Component {
       options: this.devices.audio.map((device, index) => (  { value: index,  label: device.label })),
       onchange:  (value) => {
         this.selectedDevices.audio = this.devices.audio[value]
-        this.getMedia('audio')
+        this.getMedia('audio', true)
       }
     })
 
@@ -137,7 +145,11 @@ module.exports = class MediaSettings extends Component {
     var audioSettings = Object.keys(this.constraints.audio).map((constraint) =>
     html`<div class="pv1 dib mr3">
             <input type="checkbox" id=${constraint} name=${constraint} checked=${this.constraints.audio[constraint]}
-            onchange=${(e) => this.applyConstraints('audio', { [constraint]: e.target.checked } )}>
+            onchange=${(e) => {
+            //  this.applyConstraints('audio', { [constraint]: e.target.checked } ) // bug, seems that applyConstraints does not work for audio. must retrigger call to getUserMedia()
+              this.constraints.audio[constraint] = e.target.checked
+              this.getMedia('audio', true)
+            }}>
             <span class="pl1">${constraint}</span>
         </div>`
       )
@@ -150,10 +162,13 @@ module.exports = class MediaSettings extends Component {
     })}
   </div>`
 )
-
-this.trackInfoEl =  html` <div class="mt2 mb4 i">Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps</div>`
+console.log('audio INFO', this.trackInfo.audio)
+this.trackInfoEl =  html` <div class="mt2 mb4 i">
+  Actual video dimensions:  ${this.trackInfo.video.width}x${this.trackInfo.video.height}, ${this.trackInfo.video.frameRate}fps
+   <br>${Object.keys(this.constraints.audio).map((key) => `${key}: ${this.trackInfo.audio[key]}`).join(', ')}
+</div>`
 //  console.log('rendering',this.trackInfoEl)
-
+//  ${Object.keys(this.trackInfo.audio).map((key) => html`${key}: ${this.trackInfo.audio[key]}`)}
   var popup = html`${Modal({
     show: isOpen,
     header: "Media Settings",
