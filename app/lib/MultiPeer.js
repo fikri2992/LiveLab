@@ -125,11 +125,13 @@ MultiPeer.prototype._connectToPeers = function (_t, peers, servers) {
   if (servers) {
     this._peerOptions.config = {
       iceServers: servers,
-      sdpSemantics: 'plan-b'
+      sdpSemantics: 'plan-b',
+      trickle: false
     }
   } else {
     this._peerOptions.config = {
-      sdpSemantics: 'plan-b'
+      sdpSemantics: 'plan-b',
+      trickle: false
     }
     this.servers = servers
   }
