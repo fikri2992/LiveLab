@@ -63,6 +63,10 @@ class ShowWindow {
       self.win.document.body.style.padding = "0px"
       self.win.document.body.style.margin = "0px"
       self.win.document.body.appendChild(self.video)
+      // self.video.style.position = 'fixed'
+      // self.video.style.top = '0px'
+      // self.video.style.left = '0px'
+
 
       window.vid = self.video
 

@@ -242,6 +242,37 @@ function devicesModel (state, bus) {
       bus.emit('render')
     }).catch(console.log.bind(console)) // TO DO:: display error to user
   }
+
+  bus.on('devices:shareScreen', () => {
+    startCapture({
+  // video: {
+  //   resizeMode: "none"
+  // },
+  // audio: true
+})
+  //  console.log(stream)
+  })
+
+  async function startCapture(displayMediaOptions) {
+    let stream = null;
+    try {
+      stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+      var settings = getSettingsFromStream(stream)
+      bus.emit('media:addStream', {
+        stream: stream,
+        streamId: stream.id,
+        peerId: state.user.uuid,
+        isDefault: false,
+        name: settings.video.displaySurface,
+        settings: settings
+      })
+      bus.emit('user:addStream', stream)
+      bus.emit('render')
+    } catch(err) {
+      bus.emit('log:warn', err)
+    }
+    return stream;
+  }
 }
 
 //format ui settings object into getUserMedia constraints
