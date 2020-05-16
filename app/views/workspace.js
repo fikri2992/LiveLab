@@ -71,13 +71,7 @@ function workspaceView (state, emit) {
               onclick=${() => emit('devices:addNewMedia', true)}
               title="Add Media Broadcast"
             >
-            </i>
-              <i
-               class="fas fa-desktop dim pointer fr mr3"
-               title="Share Screen"
-               onclick= ${() => emit('devices:shareScreen')}
-               ></i>
-            `
+            </i>`
           }
         )}
         ${inspector(state,emit)}
@@ -92,21 +86,6 @@ function workspaceView (state, emit) {
              }
            )}
          ${oscEl}
-         <!--
-         ${panel(
-           {
-             htmlProps: {
-               class: "w-100"
-             },
-             //Tong Modify - adding bandwidth link
-             contents: bandWidth(state, emit),
-             //Tong Modify - adding bandwidth link
-             /*contents: bandWidth(state, emit),*/
-             closable: false,
-             header:   "Bandwith Adjustment"
-           }
-         )}
-         !--->
       </div>
       ${AddMedia(state.devices, emit, { showElement: state.devices.default.constraints.isOpen, addNewStream: true})}
       ${ConfigureOsc(state.osc.configureForwarding, emit, state.osc.configureForwarding.visible)}

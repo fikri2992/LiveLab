@@ -29,7 +29,15 @@ Run the browser version:
 npm run start-local
 ```
 
-To run the desktop version:
+To run the desktop version, first install nwjs as a command-line utility.
+```
+npm install -g nwjs
+```
+Then, install version 0.28.0 of nwjs:
+```
+nw install 0.28.0-sdk
+```
+Run the desktop app:
 ```
 npm run start-nw
 ```
@@ -40,41 +48,12 @@ npm run watch
 ```
 
 # Changelog
-## [1.3.0] - 2020-05-03
-  Major refactor
-### Changed
-  - All state related to media streams contained in MultiPeer.js
-  - choo stores only used for ui state
-  - login, media settings, chat are all stateful components that only rerender when needed
+## [1.2.1e] - 2020-04-27
+ - more debugging for media constraints
+ - different call methods for audio and video due to inconsistencies
 
-### Fixed
-  - bug on page load in safari
-  
-### Added
-  - Audio mixer
-  - popout window button
-  - video mute
-  - adaptive layout + layout controls
-  - all users can see muted streams
-
-## [1.2.5] - 2020-03-31
-### Changed
- - scrollable track info
- - removed bandwidth info
- - no volume control for own audio
- - colors for muting and volume control
-
-## [1.2.4] - 2020-03-31
-### Added
- - controls for echoCancellation, autoGainControl, and noiseSuppressiong
-
-## [1.2.3] - 2020-03-28
-### Fixed
- - building and running the desktop on multiple platforms and without requiring nw.js to be installed globally
-
-## [1.2.2] - 2020-03-28
-### Added
- - screensharing
+## [1.2.1b] - 2020-04-23
+ - Call 'apply constraints' twice in order to insure resolution.
 
 ## [1.2.1] - 2020-03-27
 ### Added

@@ -67,30 +67,11 @@ function addBroadcast (devices, emit, opts) {
                })}
               </div>
               <div class="w-30 dib fl pa4">
-                <h3>Media Settings</h3>
-                 <h4> Audio </h4>
-                  ${Object.keys(devices.default.constraints.audio).map((constraint) =>
-                    html`<div class="pv1">
-                    <input
-                      type="checkbox"
-                      id=${constraint}
-                      name=${constraint}
-                      checked=${devices.default.constraints.audio[constraint]}
-                      onchange=${(e) => {
-                        emit('devices:updateBroadcastConstraint', {
-                          kind: 'audio',
-                          constraint: constraint,
-                          value: e.target.checked
-                        })
-                      }
-                      }>
-                    <span class="pl1">${constraint}</span></div>`
-                  )}
-                 <h4> Video </h4>
+                <h4>Apply constraints</h4>
               ${Object.keys(devices.default.constraints.video).map((constraint) => input(constraint, "",
                     {
                       value: devices.default.constraints.video[constraint],
-                      onkeyup: (e) => updateVideoConstraint(constraint, e.srcElement.value)
+                      onkeyup: (e) => updateBroadcastConstraint(constraint, e.srcElement.value)
                     })
                   )}
                   </div>
@@ -109,7 +90,7 @@ function addBroadcast (devices, emit, opts) {
       emit('devices:setBroadcastKind', e.target.value)
     }
 
-    function updateVideoConstraint(constraint, value){
+    function updateBroadcastConstraint(constraint, value){
       console.log('updating', constraint, value)
       emit('devices:updateBroadcastConstraint', {
         kind: 'video',

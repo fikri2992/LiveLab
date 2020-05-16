@@ -4,14 +4,14 @@ const html = require('choo/html')
 const xtend = require('xtend')
 const shallowEqual = require('juliangruber-shallow-equal/objects')
 
-module.exports = Dropdown
+module.exports = DropdownSmall
 /* using microcomponent in order to create an element that keeps track of
 its own state. custom dropdown based on:
 https://tympanus.net/codrops/2012/10/04/custom-drop-down-list-styling/
  */
 
-function Dropdown () {
-  if (!(this instanceof Dropdown)) return new Dropdown()
+function DropdownSmall() {
+  if (!(this instanceof DropdownSmall)) return new DropdownSmall()
   this.state = {
     active: false
   }
@@ -19,29 +19,33 @@ function Dropdown () {
   Nano.call(this)
 }
 
-Dropdown.prototype = Object.create(Nano.prototype)
+DropdownSmall.prototype = Object.create(Nano.prototype)
 
-Dropdown.prototype.createElement = function (props) {
+DropdownSmall.prototype.createElement = function (props) {
   this.props = props
-  const style = css`
+  const style = css `
  :host {
   /* Size and position */
   position: relative; /* Enable absolute positioning for children and pseudo elements */
-  width: 400px;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  width: 8rem;
+  padding: 0.4rem;
+  margin: 0;
+  /*
+  margin-top: 10px;
+  margin-bottom: 10px;
+  */
+
   /*margin: 0 auto;*/
 
   /* Styles */
-  /*background: #9bc7de;
   color: #fff;*/
-  background: #555555;
   outline: none;
   cursor: pointer;
 
   /* Font settings */
- /* font-weight: bold;*/
+  border: 1px dashed #FFFFFF;
+  box-sizing: border-box;
+  
  }
 
  :host:after {
@@ -57,7 +61,7 @@ Dropdown.prototype.createElement = function (props) {
   border-color: transparent #fff;
  }
 
- :host .dropdown {
+ :host .dropdownSmall {
   /* Size & position */
   position: absolute;
   top: 100%;
@@ -75,7 +79,7 @@ Dropdown.prototype.createElement = function (props) {
   z-index: 100
  }
 
- :host .dropdown li {
+ :host .dropdownSmall li {
   list-style-type: none;
   display: block;
   text-decoration: none;
@@ -85,11 +89,11 @@ Dropdown.prototype.createElement = function (props) {
  }
 
   /* Hover state */
-  :host .dropdown li:hover {
+  :host .dropdownSmall li:hover {
       background: #f3f8f8;
   }
 
-  :host.active .dropdown {
+  :host.active .dropdownSmall {
     opacity: 1;
     pointer-events: auto;
   }
@@ -107,19 +111,23 @@ Dropdown.prototype.createElement = function (props) {
 
  `
 
-  var { onchange, value, options } = this.props
- // console.log("rendering ", this.state.active)
+  var {
+    onchange,
+    value,
+    options
+  } = this.props
+  // console.log("rendering ", this.state.active)
 
- // var activeStyles = ""
-  var tachyonsStyles = ' bg-mid-gray f6'
-if(this.props.style) tachyonsStyles = this.props.style
+  // var activeStyles = ""
+  var tachyonsStyles = ' bg-mid-gray font-Inter f5 b fl fs-normal lh-title br3'
+  if (this.props.style) tachyonsStyles = this.props.style
 
-    return html`
+  return html `
     <div>
       <div class=${style + tachyonsStyles +(this.state.active===true ? ' active': '')} tabindex="0" onclick=${this.toggleActive.bind(this)} onblur=${this.deactivate.bind(this)}>
-      <span>${value}</span>
+      <span class="pl3">${value}</span>
 
-      <ul class="dropdown">
+      <ul class="dropdownSmall">
           ${options.map((item)=>
              html`<li data-value=${item.value} onclick=${this.handleclick.bind(this)} >${item.label}</li>`
           )}
@@ -133,25 +141,25 @@ if(this.props.style) tachyonsStyles = this.props.style
 
 
 
-Dropdown.prototype.handleclick = function (e){
+DropdownSmall.prototype.handleclick = function (e) {
   //console.log(e)
 
   this.props.onchange(e.target.dataset.value)
 }
 
-Dropdown.prototype.toggleActive = function (){
+DropdownSmall.prototype.toggleActive = function () {
   this.state.active = !this.state.active
   this.state.needsUpdate = true
   this.render(this.props)
 }
 
-Dropdown.prototype.deactivate = function (){
+DropdownSmall.prototype.deactivate = function () {
   this.state.active = false
   this.state.needsUpdate = true
   this.render(this.props)
 }
 
-Dropdown.prototype.update = function (props) {
+DropdownSmall.prototype.update = function (props) {
 
   return !shallowEqual(props, this.props) || this.state.needsUpdate
 

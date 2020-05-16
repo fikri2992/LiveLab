@@ -10,7 +10,7 @@ its own state. custom dropdown based on:
 https://tympanus.net/codrops/2012/10/04/custom-drop-down-list-styling/
  */
 
-function Dropdown () {
+function Dropdown() {
   if (!(this instanceof Dropdown)) return new Dropdown()
   this.state = {
     active: false
@@ -23,25 +23,33 @@ Dropdown.prototype = Object.create(Nano.prototype)
 
 Dropdown.prototype.createElement = function (props) {
   this.props = props
-  const style = css`
+  const style = css `
  :host {
   /* Size and position */
   position: relative; /* Enable absolute positioning for children and pseudo elements */
   width: 400px;
   padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 0;
+  /*
+  margin-top: 10px;
+  margin-bottom: 10px;
+  */
+
   /*margin: 0 auto;*/
 
   /* Styles */
   /*background: #9bc7de;
   color: #fff;*/
-  background: #555555;
+  background: #024249; 
+  /*#555555*/
   outline: none;
   cursor: pointer;
 
   /* Font settings */
- /* font-weight: bold;*/
+  font-family: Inter; 
+  font-style: normal;
+  line-height:15px;
+  
  }
 
  :host:after {
@@ -107,14 +115,18 @@ Dropdown.prototype.createElement = function (props) {
 
  `
 
-  var { onchange, value, options } = this.props
- // console.log("rendering ", this.state.active)
+  var {
+    onchange,
+    value,
+    options
+  } = this.props
+  // console.log("rendering ", this.state.active)
 
- // var activeStyles = ""
-  var tachyonsStyles = ' bg-mid-gray f6'
-if(this.props.style) tachyonsStyles = this.props.style
+  // var activeStyles = ""
+  var tachyonsStyles = ' bg-mid-gray f6 fl '
+  if (this.props.style) tachyonsStyles = this.props.style
 
-    return html`
+  return html `
     <div>
       <div class=${style + tachyonsStyles +(this.state.active===true ? ' active': '')} tabindex="0" onclick=${this.toggleActive.bind(this)} onblur=${this.deactivate.bind(this)}>
       <span>${value}</span>
@@ -133,19 +145,19 @@ if(this.props.style) tachyonsStyles = this.props.style
 
 
 
-Dropdown.prototype.handleclick = function (e){
+Dropdown.prototype.handleclick = function (e) {
   //console.log(e)
 
   this.props.onchange(e.target.dataset.value)
 }
 
-Dropdown.prototype.toggleActive = function (){
+Dropdown.prototype.toggleActive = function () {
   this.state.active = !this.state.active
   this.state.needsUpdate = true
   this.render(this.props)
 }
 
-Dropdown.prototype.deactivate = function (){
+Dropdown.prototype.deactivate = function () {
   this.state.active = false
   this.state.needsUpdate = true
   this.render(this.props)

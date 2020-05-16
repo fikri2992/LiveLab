@@ -8,17 +8,17 @@ const panel = require('./panel.js')
 module.exports = Modal
 
 // reusable input element
-function Modal (opts) {
+function Modal(opts) {
   assert.equal(typeof opts, 'object', 'Modal: opts should be type object')
 
-  if (opts.show=== true) {
+  if (opts.show === true) {
 
     // to do: utf-8 special character is not working, ideally would be &times; for close button
-    return html`
-        <div class="fixed vh-100 dt w-100 h-100 bg-black top-0 left-0" style="background-color: rgba(0, 0, 0, 0.5)">
+    return html `
+        <div class="fixed vh-100 dt w-100 bg-black top-0 left-0" style="background-color: rgba(0, 0, 0, 0.5)">
           ${panel({
             htmlProps: {
-              class: "dib w-70-ns w-100 h-70",
+              class: "dib w-70 h-70",
               style: "position:absolute;left:50%;top:50%;transform:translate(-50%, -50%)",
             },
             closable: true,
@@ -29,6 +29,6 @@ function Modal (opts) {
         </div>
     `
   } else {
-    return html`<div></div>`;
+    return html `<div></div>`
   }
 }

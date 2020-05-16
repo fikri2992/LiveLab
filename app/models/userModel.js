@@ -13,12 +13,12 @@ function userModel (state, bus) {
     uuid: shortid.generate(), // for dev purposes, always regenerate id
     room: state.query.room || localStorage.getItem('livelab-room') || 'zebra',
     server: 'https://livelab.app:6643',
-    version: '1.2.5',
+    version: '1.2.1e',
     loggedIn: false,
     nickname: localStorage.getItem('livelab-nickname') || '',
     statusMessage: '',
     multiPeer: null,
-    muted: false,
+    muted: true,
     isOnline: true
   }, state.user)
 
@@ -55,17 +55,12 @@ function userModel (state, bus) {
 
   // @ to do: dont update state within function, move to ui model
   bus.on('user:toggleMute', function() {
-    var defaultStreamId = state.peers.byId[state.user.uuid].defaultStream
-    var defaultStream = state.media.byId[defaultStreamId].stream
-    var audioTracks = defaultStream.getAudioTracks()
     if(state.user.muted===true) {
-      audioTracks.forEach((track) => track.enabled = true)
       state.user.muted = false
     } else {
-    //  track.enabled = false
-      audioTracks.forEach((track) => track.enabled = false)
       state.user.muted = true
     }
+    updateMute()
     bus.emit('render')
   })
 
@@ -78,9 +73,43 @@ function userModel (state, bus) {
   //  bus.emit('render')
   })
 
+  function updateMute() {
+    var defaultStreamId = state.peers.byId[state.user.uuid].defaultStream
+    var defaultStream = state.media.byId[defaultStreamId].stream
+    var audioTracks = defaultStream.getAudioTracks()
+    audioTracks.forEach((track) => {
+      track.enabled = !state.user.muted
+    })
+  }
+
 
   // Initiate connection with signalling server
   bus.on('user:join', function (opts) {
+    // var defaultStreamId = state.peers.byId[state.user.uuid].defaultStream
+    // var defaultStream = state.media.byId[defaultStreamId].stream
+    // var audioTracks = defaultStream.getAudioTracks()
+    // console.log('audio tracks', audioTracks)
+    updateMute()
+  //  emit('user:join',  {room: this.room, server: this.server, stream: new MediaStream(Object.values(this.tracks)), nickname: this.nickname, requestMedia: true})
+
+    state.user.nickname = opts.nickname
+    state.user.room = opts.room
+    state.user.server = opts.server
+    // state.devices.default: {
+    //   name: 'default',
+    //   inputDevices: {
+    //     audio: null,
+    //     video: null
+    //   },
+    //   previewTracks: {
+    //     audio: null,
+    //     video: null
+    //   },
+    //   trackInfo: {
+    //     audio: {},
+    //     video: {}
+    //   },
+
   //  localStorage.setItem('uuid', state.user.uuid)
     localStorage.setItem('livelab-nickname', state.user.nickname)
     localStorage.setItem('livelab-room', state.user.room)
@@ -108,7 +137,6 @@ function userModel (state, bus) {
       }
     }, bus)
 
-    state.user.multiPeer = multiPeer
 
     //received initial list of peers from signalling server, update local peer information
     multiPeer.on('peers', function (peers) {
@@ -211,9 +239,6 @@ function userModel (state, bus) {
    })
 
 
-   bus.on('user:updateLocalInfo', () => {
-     updateLocalInfo()
-   })
 
 //share local updates to track or user information with peers
 function updateLocalInfo(id){

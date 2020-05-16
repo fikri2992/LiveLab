@@ -10,8 +10,8 @@ var certificate = fs.readFileSync(__dirname +'/certs/fullchain.pem', 'utf8');
 var credentials = {key: privateKey, cert: certificate}
 
 var httpsServer = https.createServer(credentials, app)
-//var portNumber = 443
-var portNumber = 8000
+var portNumber = 443
+//var portNumber = 8000
 // browserify.settings({
 //   transform: ['sheetify']
 // })
