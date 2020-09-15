@@ -20,7 +20,7 @@ class MultiPeer extends EventEmitter {
 
   init (
     {
-      server = 'https://localhost:6643',
+      server = 'https://167.172.190.249:6643',
       room = '',
       userData = {},
       peerOptions = {},
