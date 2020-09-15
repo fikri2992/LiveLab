@@ -147,7 +147,7 @@ class MultiPeer extends EventEmitter {
 
   init (
     {
-      server = 'https://167.172.190.249:6643',
+      server = 'https://1api-remote.hover.live:6643',
       room = '',
       userData = {},
       peerOptions = {},
@@ -715,9 +715,9 @@ module.exports = (state, emitter) => {
     // room: state.query.room || localStorage.getItem('livelab-room') || 'zebra',
     room: state.query.room,
     // server: process.env.NODE_ENV === 'production'
-    //   ? 'https://167.172.190.249:6643'
+    //   ? 'https://1api-remote.hover.live:6643'
     //   : 'https://live-lab-v1.glitch.me',
-    server: 'https://167.172.190.249:6643',
+    server: 'https://1api-remote.hover.live:6643',
     statusMessage: '',
     requestMedia: true,
     isAudioMuted: false,
