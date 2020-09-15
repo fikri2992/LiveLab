@@ -1,26 +1,14 @@
-var fs = require('fs')
+var fs = require('fs');
 var express = require('express')
-var app = express()
+var app = express();
 var browserify = require('browserify-middleware')
 var https = require('https')
+var express = require('express');
+var app = express();
+var path = require('path');
 
-//require('dotenv').config();
+//app.use(express.static(__dirname)); // Current directory is root
+app.use(express.static(path.join(__dirname, '/public/'))); //  "public" off of current is root
 
-var privateKey = fs.readFileSync(__dirname + '/certs/privkey.pem', 'utf8')
-var certificate = fs.readFileSync(__dirname + '/certs/fullchain.pem', 'utf8')
-
-
-var credentials = {
-  key: privateKey,
-  cert: certificate
-}
-
-var httpsServer = https.createServer(credentials, app)
-
-var portNumber = 443
-
-httpsServer.listen(portNumber, function () {
-  console.log("server available at port " + portNumber)
-})
-
-app.use(express.static(__dirname + '/public'))
+app.listen(8081);
+console.log('Listening on port 8081');
