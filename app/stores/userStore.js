@@ -13,9 +13,9 @@ module.exports = (state, emitter) => {
     // room: state.query.room || localStorage.getItem('livelab-room') || 'zebra',
     room: state.query.room,
     // server: process.env.NODE_ENV === 'production'
-    //   ? 'https://livelab.app:6643'
+    //   ? 'https://localhost:6643'
     //   : 'https://live-lab-v1.glitch.me',
-    server: 'https://livelab.app:6643',
+    server: 'https://localhost:6643',
     statusMessage: '',
     requestMedia: true,
     isAudioMuted: false,

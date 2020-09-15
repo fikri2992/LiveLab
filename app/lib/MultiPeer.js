@@ -20,7 +20,7 @@ class MultiPeer extends EventEmitter {
 
   init (
     {
-      server = 'https://livelab.app:6643',
+      server = 'https://localhost:6643',
       room = '',
       userData = {},
       peerOptions = {},
